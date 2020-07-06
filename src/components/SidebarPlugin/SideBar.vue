@@ -8,7 +8,7 @@
     <div class="sidebar-wrapper" id="style-3">
       <div class="logo">
         <a href="/" class="simple-text text-center">
-          <img src="@/assets/img/logo.png" alt height="30px" />
+          Ghoomo
         </a>
       </div>
       <slot></slot>
@@ -35,7 +35,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "Magoo Dashboard"
+      default: "Ghoomo Dashboard"
     },
     backgroundColor: {
       type: String,

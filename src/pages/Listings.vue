@@ -7,14 +7,10 @@
             <h4 class="card-title">{{table1.title}}</h4>
             <p class="card-category" v-if="table1.subTitle">{{table1.subTitle}}</p>
           </div>
-
-          <div class="col-md-2 ml-auto">
-            <p-button round outline block @click.native="$router.push('/new')">Add new</p-button>
-          </div>
         </div>
 
         <div slot="raw-content" class="table-responsive">
-          <paper-table v-if="!isLoading" :data="table1.data" :columns="table1.columns" @delete="deleteTarget"></paper-table>
+          <paper-table v-if="!isLoading" :data="table1.data" :columns="table1.columns" @delete="deleteListing"></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
               <span class="sr-only">Loading...</span>
@@ -30,7 +26,7 @@
                 v-for="(page, i) in pages"
                 :key="i"
               >
-                <a class="page-link" :href="`/#/targets?page=${page}`">{{ page }}</a>
+                <a class="page-link" :href="`/#/listings?page=${page}`">{{ page }}</a>
               </li>
             </ul>
           </nav>
@@ -42,7 +38,7 @@
 <script>
 import { PaperTable } from "@/components";
 import api from "@/api";
-const tableColumns = ["Target_Name", "Type"];
+const tableColumns = ["title", "description", "type", "departure_city", "destination_city", "start_date", "end_date", "num_seats", "is_featured"];
 const tableData = [
   {
     id: 1,
@@ -89,8 +85,8 @@ export default {
         : 1,
       rows: 24,
       table1: {
-        title: "Targets Database",
-        subTitle: "Cloud target management",
+        title: "Listings",
+        subTitle: "All users created listings",
         columns: [...tableColumns],
         data: [...tableData]
       }
@@ -119,12 +115,12 @@ export default {
   methods: {
     async fetch(page) {
       this.isLoading = true;
-      const { data } = await api.targets(page);
+      const { data } = await api.listings(page);
       this.isLoading = false;
       this.rows = data.count;
       this.table1.data = data.results;
     },
-    async deleteTarget(target, index) {
+    async deleteListing(target, index) {
       this.isLoading = true;
       const { data } = await api.delete(target.target_id)
       this.isLoading = false;

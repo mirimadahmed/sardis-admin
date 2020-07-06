@@ -2,7 +2,10 @@
   <div class="wrapper">
     <side-bar>
       <template slot="links">
-        <sidebar-link to="/targets" name="Targets" icon="ti-image"/>
+        <sidebar-link to="/listings" name="Listings" icon="ti-image"/>
+        <sidebar-link to="/users" name="Users" icon="ti-user"/>
+        <sidebar-link to="/reported" name="Reported" icon="ti-shield"/>
+        <sidebar-link to="/analytics" name="Analytics" icon="ti-stats-up"/>
       </template>
       <mobile-menu>
         <li class="nav-item">

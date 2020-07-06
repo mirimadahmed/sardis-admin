@@ -1,31 +1,35 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
-// GeneralViews
 import NotFound from "@/pages/NotFoundPage.vue";
-
-// Admin pages
-import Dashboard from "@/pages/Dashboard.vue";
-import UserProfile from "@/pages/UserProfile.vue";
-import Notifications from "@/pages/Notifications.vue";
-import Icons from "@/pages/Icons.vue";
-import Maps from "@/pages/Maps.vue";
-import Typography from "@/pages/Typography.vue";
-import TableList from "@/pages/TableList.vue";
+import Listings from "@/pages/Listings.vue";
+import Users from "@/pages/Users.vue";
+import Reported from "@/pages/Reported.vue";
+import Analytics from "@/pages/Analytics.vue";
 
 const routes = [
   {
     path: "/",
     component: DashboardLayout,
-    redirect: "/targets",
+    redirect: "/listings",
     children: [
       {
-        path: "targets",
-        name: "targets",
-        component: TableList
+        path: "listings",
+        name: "listings",
+        component: Listings
       },
       {
-        path: "new",
-        name: "new target",
-        component: UserProfile
+        path: "users",
+        name: "users",
+        component: Users
+      },
+      {
+        path: "reported",
+        name: "reported",
+        component: Reported
+      },
+      {
+        path: "analytics",
+        name: "analytics",
+        component: Analytics
       }
     ]
   },
