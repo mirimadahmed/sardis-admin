@@ -26,7 +26,7 @@
                 v-for="(page, i) in pages"
                 :key="i"
               >
-                <a class="page-link" :href="`/#/listings?page=${page}`">{{ page }}</a>
+                <a class="page-link" :href="`/#/reported?page=${page}`">{{ page }}</a>
               </li>
             </ul>
           </nav>
@@ -38,7 +38,7 @@
 <script>
 import { PaperTable } from "@/components";
 import api from "@/api";
-const tableColumns = ["title", "description", "type", "departure_city", "destination_city", "start_date", "end_date", "num_seats", "is_featured"];
+const tableColumns = ["reported_by_name", "message", "status"];
 const tableData = [
   {
     id: 1,
@@ -85,8 +85,8 @@ export default {
         : 1,
       rows: 24,
       table1: {
-        title: "Listings",
-        subTitle: "All users created listings",
+        title: "Reported Listings",
+        subTitle: "All listings reported by users",
         columns: [...tableColumns],
         data: [...tableData]
       }
@@ -115,7 +115,7 @@ export default {
   methods: {
     async fetch(page) {
       this.isLoading = true;
-      const { data } = await api.listings(page);
+      const { data } = await api.reportedListings(page);
       this.isLoading = false;
       this.rows = data.count;
       this.table1.data = data.results;

@@ -1,20 +1,27 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 import NotFound from "@/pages/NotFoundPage.vue";
-import Listings from "@/pages/Listings.vue";
+import Experiences from "@/pages/Experiences.vue";
+import Tours from "@/pages/Tours.vue";
 import Users from "@/pages/Users.vue";
-import Reported from "@/pages/Reported.vue";
+import ReportedUser from "@/pages/ReportedUser.vue";
+import ReportedListing from "@/pages/ReportedListing.vue";
 import Analytics from "@/pages/Analytics.vue";
 
 const routes = [
   {
     path: "/",
     component: DashboardLayout,
-    redirect: "/listings",
+    redirect: "/analytics",
     children: [
       {
-        path: "listings",
-        name: "listings",
-        component: Listings
+        path: "tours",
+        name: "tours",
+        component: Tours
+      },
+      {
+        path: "experiences",
+        name: "experiences",
+        component: Experiences
       },
       {
         path: "users",
@@ -22,9 +29,14 @@ const routes = [
         component: Users
       },
       {
-        path: "reported",
-        name: "reported",
-        component: Reported
+        path: "reported-users",
+        name: "reported users",
+        component: ReportedUser
+      },
+      {
+        path: "reported-listings",
+        name: "reported listings",
+        component: ReportedListing
       },
       {
         path: "analytics",

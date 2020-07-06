@@ -2,9 +2,11 @@
   <div class="wrapper">
     <side-bar>
       <template slot="links">
-        <sidebar-link to="/listings" name="Listings" icon="ti-image"/>
+        <sidebar-link to="/tours" name="Tours" icon="ti-camera"/>
+        <sidebar-link to="/experiences" name="Experiences" icon="ti-ticket"/>
         <sidebar-link to="/users" name="Users" icon="ti-user"/>
-        <sidebar-link to="/reported" name="Reported" icon="ti-shield"/>
+        <sidebar-link to="/reported-users" name="Reported Users" icon="ti-shield"/>
+        <sidebar-link to="/reported-listings" name="Reported Listings" icon="ti-flag"/>
         <sidebar-link to="/analytics" name="Analytics" icon="ti-stats-up"/>
       </template>
       <mobile-menu>

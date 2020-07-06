@@ -1,30 +1,49 @@
 import axios from 'axios'
 
 const axiosObj = axios.create({
-  baseURL: 'http://ghoomo.com.pk/mobile_app/admin_api/'
+  baseURL: 'http://ghoomo.com.pk/mobile_app/admin_api/',
+  // headers: { 'Cache-Control': 'no-cache' }
 })
 
 
 export default {
-  targets(page) {
-    return axiosObj.get(`/targets.php?page=${page}`)
-  },
-  create(target) {
-    return axiosObj.post('/targets.php', target)
-  },
-  delete(target_id) {
-    return axiosObj.get(`/DeleteTarget.php?target_id=${target_id}`)
-  },
-  users() {
-    return axiosObj.get(`/get_users.php`)
+  users(page) {
+    return axiosObj.get(`/get_users.php?page=${page}`)
   },
   activate(id) {
-    return axiosObj.get(`/update_userstatus.php?id=${id}&status=active`)
+    let form = new FormData();
+    form.append('id', id);
+    form.append('status', 'active');
+    return axiosObj.post(`/update_userstatus.php`, form)
   },
   suspend(id) {
-    return axiosObj.get(`/update_userstatus.php?id=${id}&status=suspend`)
+    let form = new FormData();
+    form.append('id', id);
+    form.append('status', 'suspended');
+    return axiosObj.post(`/update_userstatus.php`, form)
   },
   listings(page) {
-    return axiosObj.get(`/get_listings.php?page=${page}`)
+    return axiosObj.get(`/get_listings.php?page=${page}&type=tour`)
   },
+  experiences(page) {
+    return axiosObj.get(`/get_listings.php?page=${page}&type=experience`)
+  },
+  activateListing(id) {
+    let form = new FormData();
+    form.append('id', id);
+    form.append('status', 'active');
+    return axiosObj.post(`/update_listingstatus.php`, form)
+  },
+  suspendListing(id) {
+    let form = new FormData();
+    form.append('id', id);
+    form.append('status', 'suspended');
+    return axiosObj.post(`/update_listingstatus.php`, form)
+  },
+  reportedUsers(page) {
+    return axiosObj.get(`/get_reporteditems.php?page=${page}&type=users`)
+  },
+  reportedListings(page) {
+    return axiosObj.get(`/get_reporteditems.php?page=${page}&type=listings`)
+  }
 }

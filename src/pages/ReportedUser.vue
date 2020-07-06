@@ -10,7 +10,7 @@
         </div>
 
         <div slot="raw-content" class="table-responsive">
-          <paper-table v-if="!isLoading" :data="table1.data" :columns="table1.columns" @active="activateUser" @suspended="suspendUser"></paper-table>
+          <paper-table v-if="!isLoading" :data="table1.data" :columns="table1.columns" @delete="deleteListing"></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
               <span class="sr-only">Loading...</span>
@@ -26,7 +26,7 @@
                 v-for="(page, i) in pages"
                 :key="i"
               >
-                <a class="page-link" :href="`/#/users?page=${page}`">{{ page }}</a>
+                <a class="page-link" :href="`/#/reported?page=${page}`">{{ page }}</a>
               </li>
             </ul>
           </nav>
@@ -38,7 +38,7 @@
 <script>
 import { PaperTable } from "@/components";
 import api from "@/api";
-const tableColumns = ["name", "email", "user_type", "status"];
+const tableColumns = ["reported_by_name", "message", "status"];
 const tableData = [
   {
     id: 1,
@@ -85,8 +85,8 @@ export default {
         : 1,
       rows: 24,
       table1: {
-        title: "Users",
-        subTitle: "All users",
+        title: "Reported Users",
+        subTitle: "All users reported by people",
         columns: [...tableColumns],
         data: [...tableData]
       }
@@ -115,24 +115,16 @@ export default {
   methods: {
     async fetch(page) {
       this.isLoading = true;
-      const { data } = await api.users(page);
+      const { data } = await api.reportedUsers(page);
       this.isLoading = false;
       this.rows = data.count;
       this.table1.data = data.results;
     },
-    async activateUser(user, index) {
+    async deleteListing(target, index) {
       this.isLoading = true;
-      const { data } = await api.activate(user.id)
+      const { data } = await api.delete(target.target_id)
       this.isLoading = false;
-      if(data.error === 0) {
-        this.table1.data[index].status = 'active';
-        this.$notify({
-          horizontalAlign: 'left',
-          verticalAlign: 'bottom',
-          message: 'User activated successfuly.',
-          type: 'success'
-        });
-      } else {
+      if(data.success === 0) {
         this.error = data.message
         this.$notify({
           horizontalAlign: 'left',
@@ -140,32 +132,16 @@ export default {
           message: data.message,
           type: 'danger'
         });
-        
-      }
-    },
-    async suspendUser(user, index) {
-      this.isLoading = true;
-      const { data } = await api.suspend(user.id)
-      this.isLoading = false;
-      if(data.error === 0) {
-        this.table1.data[index].status = 'suspended';
+      } else {
+        this.table1.data.splice(index, 1);
         this.$notify({
           horizontalAlign: 'left',
           verticalAlign: 'bottom',
-          message: 'User suspended successfuly.',
+          message: 'Target deleted successfuly.',
           type: 'success'
         });
-      } else {
-        this.error = data.message
-        this.$notify({
-          horizontalAlign: 'left',
-          verticalAlign: 'bottom',
-          message: data.message,
-          type: 'danger'
-        });
-        
       }
-    },
+    }
   }
 };
 </script>

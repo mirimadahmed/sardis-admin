@@ -10,7 +10,13 @@
         </div>
 
         <div slot="raw-content" class="table-responsive">
-          <paper-table v-if="!isLoading" :data="table1.data" :columns="table1.columns" @active="activateUser" @suspended="suspendUser"></paper-table>
+          <paper-table
+            v-if="!isLoading"
+            :data="table1.data"
+            :columns="table1.columns"
+            @active="activateListing"
+            @suspended="suspendListing"
+          ></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
               <span class="sr-only">Loading...</span>
@@ -26,7 +32,7 @@
                 v-for="(page, i) in pages"
                 :key="i"
               >
-                <a class="page-link" :href="`/#/users?page=${page}`">{{ page }}</a>
+                <a class="page-link" :href="`/#/listings?page=${page}`">{{ page }}</a>
               </li>
             </ul>
           </nav>
@@ -38,7 +44,7 @@
 <script>
 import { PaperTable } from "@/components";
 import api from "@/api";
-const tableColumns = ["name", "email", "user_type", "status"];
+const tableColumns = ["title", "description", "type", "departure_city", "destination_city", "start_date", "end_date", "num_seats", "is_featured", "status"];
 const tableData = [
   {
     id: 1,
@@ -85,8 +91,8 @@ export default {
         : 1,
       rows: 24,
       table1: {
-        title: "Users",
-        subTitle: "All users",
+        title: "Tours",
+        subTitle: "All users created tours",
         columns: [...tableColumns],
         data: [...tableData]
       }
@@ -115,21 +121,21 @@ export default {
   methods: {
     async fetch(page) {
       this.isLoading = true;
-      const { data } = await api.users(page);
+      const { data } = await api.listings(page);
       this.isLoading = false;
       this.rows = data.count;
       this.table1.data = data.results;
     },
-    async activateUser(user, index) {
+    async activateListing(user, index) {
       this.isLoading = true;
-      const { data } = await api.activate(user.id)
+      const { data } = await api.activateListing(user.id)
       this.isLoading = false;
       if(data.error === 0) {
         this.table1.data[index].status = 'active';
         this.$notify({
           horizontalAlign: 'left',
           verticalAlign: 'bottom',
-          message: 'User activated successfuly.',
+          message: 'Listing activated successfuly.',
           type: 'success'
         });
       } else {
@@ -143,16 +149,16 @@ export default {
         
       }
     },
-    async suspendUser(user, index) {
+    async suspendListing(user, index) {
       this.isLoading = true;
-      const { data } = await api.suspend(user.id)
+      const { data } = await api.suspendListing(user.id)
       this.isLoading = false;
       if(data.error === 0) {
         this.table1.data[index].status = 'suspended';
         this.$notify({
           horizontalAlign: 'left',
           verticalAlign: 'bottom',
-          message: 'User suspended successfuly.',
+          message: 'Listing suspended successfuly.',
           type: 'success'
         });
       } else {
@@ -165,7 +171,7 @@ export default {
         });
         
       }
-    },
+    }
   }
 };
 </script>

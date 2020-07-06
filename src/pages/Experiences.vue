@@ -10,7 +10,13 @@
         </div>
 
         <div slot="raw-content" class="table-responsive">
-          <paper-table v-if="!isLoading" :data="table1.data" :columns="table1.columns" @delete="deleteListing"></paper-table>
+          <paper-table
+            v-if="!isLoading"
+            :data="table1.data"
+            :columns="table1.columns"
+            @active="activateListing"
+            @suspended="suspendListing"
+          ></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
               <span class="sr-only">Loading...</span>
@@ -38,7 +44,7 @@
 <script>
 import { PaperTable } from "@/components";
 import api from "@/api";
-const tableColumns = ["title", "description", "type", "departure_city", "destination_city", "start_date", "end_date", "num_seats", "is_featured"];
+const tableColumns = ["title", "description", "type", "departure_city", "destination_city", "start_date", "end_date", "num_seats", "is_featured", "status"];
 const tableData = [
   {
     id: 1,
@@ -85,8 +91,8 @@ export default {
         : 1,
       rows: 24,
       table1: {
-        title: "Listings",
-        subTitle: "All users created listings",
+        title: "Experiences",
+        subTitle: "All users created experiences",
         columns: [...tableColumns],
         data: [...tableData]
       }
@@ -115,16 +121,24 @@ export default {
   methods: {
     async fetch(page) {
       this.isLoading = true;
-      const { data } = await api.listings(page);
+      const { data } = await api.experiences(page);
       this.isLoading = false;
       this.rows = data.count;
       this.table1.data = data.results;
     },
-    async deleteListing(target, index) {
+    async activateListing(user, index) {
       this.isLoading = true;
-      const { data } = await api.delete(target.target_id)
+      const { data } = await api.activateListing(user.id)
       this.isLoading = false;
-      if(data.success === 0) {
+      if(data.error === 0) {
+        this.table1.data[index].status = 'active';
+        this.$notify({
+          horizontalAlign: 'left',
+          verticalAlign: 'bottom',
+          message: 'Listing activated successfuly.',
+          type: 'success'
+        });
+      } else {
         this.error = data.message
         this.$notify({
           horizontalAlign: 'left',
@@ -132,14 +146,30 @@ export default {
           message: data.message,
           type: 'danger'
         });
-      } else {
-        this.table1.data.splice(index, 1);
+        
+      }
+    },
+    async suspendListing(user, index) {
+      this.isLoading = true;
+      const { data } = await api.suspendListing(user.id)
+      this.isLoading = false;
+      if(data.error === 0) {
+        this.table1.data[index].status = 'suspended';
         this.$notify({
           horizontalAlign: 'left',
           verticalAlign: 'bottom',
-          message: 'Target deleted successfuly.',
+          message: 'Listing suspended successfuly.',
           type: 'success'
         });
+      } else {
+        this.error = data.message
+        this.$notify({
+          horizontalAlign: 'left',
+          verticalAlign: 'bottom',
+          message: data.message,
+          type: 'danger'
+        });
+        
       }
     }
   }
