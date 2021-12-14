@@ -1,69 +1,113 @@
 <template>
   <card class="card-user">
-    <div slot="image">
-      <img src="@/assets/img/background.jpg" alt="...">
-    </div>
-    <div>
-      <div class="author">
-        <img class="avatar border-white" src="@/assets/img/faces/face-2.jpg" alt="...">
-        <h4 class="title">Chet Faker
-          <br>
+    <div v-if="user">
+      <div class="author mt-2">
+        <img
+          class="avatar border-white"
+          :src="`./api/pictures/agents/${user.profile_pic}`"
+          alt="..."
+        />
+        <h4 class="title">
+          {{ user.full_name }}
+          <br />
           <a href="#">
-            <small>@chetfaker</small>
+            <small>{{ user.email }}</small>
           </a>
         </h4>
       </div>
       <p class="description text-center">
-        "I like the way you work it
-        <br> No diggity
-        <br> I wanna bag it up"
+        {{ user.unit }}  
+        <br />
+        {{ user.location }}
       </p>
     </div>
-    <hr>
-    <div class="text-center">
-      <div class="row">
-        <div v-for="(info, index) in details" :key="index" :class="getClasses(index)">
-          <h5>{{info.title}}
-            <br>
-            <small>{{info.subTitle}}</small>
-          </h5>
-        </div>
+    <hr v-if="user" />
+    <div class="row" v-if="user">
+      <div class="col-6">
+        <h5>
+          Contact Person: 
+          {{ user.contact_person }}
+        </h5>
+        <h5>
+          Phone: 
+          {{ user.phone }}
+        </h5>
+        <h5>
+          Balance: 
+          {{ user.balance }}
+        </h5>
+        <h5>
+          Bank Name: 
+          {{ user.bank_name }}
+        </h5>
+        <h5>
+          Account Number: 
+          {{ user.acc_number }}
+        </h5>
+        <h5>
+          User status: 
+          {{ user.status }}
+        </h5>
+      </div>
+      <div class="col-4 p-5">
+        <h5>Change Status</h5>
+        <p-button
+            v-if="user.status == 'active'"
+            size="sm"
+            round
+            outline
+            block
+            @click.native="$emit('changeStatus', 'suspended', user)"
+          >Suspend</p-button>
+          <p-button
+            v-if="user.status == 'suspended'"
+            size="sm"
+            round
+            outline
+            block
+            @click.native="$emit('changeStatus', 'active', user)"
+          >Activate</p-button>
+          <p-button
+            v-if="user.status == 'pending'"
+            size="sm"
+            round
+            outline
+            block
+            @click.native="$emit('changeStatus', 'active', user)"
+          >Approve</p-button>
+          <p-button
+            v-if="user.status == 'pending'"
+            size="sm"
+            round
+            outline
+            block
+            @click.native="$emit('changeStatus', 'rejected', user)"
+          >Reject</p-button>
+          <p v-if="user.status === 'rejected'">User rejected.</p>
+      </div>
+    </div>
+    <div class="row" v-if="user">
+      <div class="col-6">
+        <h5>Registration</h5>
+        <img :src="`./api/pictures/agents/${user.registration}`" alt="Registration Image Here" class="w-100 text-center shadow-sm" />
+      </div>
+      <div class="col-6">
+        <h5>Location Picture / Selfie</h5>
+        <img :src="`./api/pictures/agents/${user.photo}`" alt="Location Picture / Selfie Here" class="w-100 text-center shadow-sm" />
       </div>
     </div>
   </card>
 </template>
 <script>
 export default {
-  data() {
-    return {
-      details: [
-        {
-          title: "12",
-          subTitle: "Files"
-        },
-        {
-          title: "2GB",
-          subTitle: "Used"
-        },
-        {
-          title: "24,6$",
-          subTitle: "Spent"
-        }
-      ]
-    };
+  props:{
+    user: {
+      type: Object,
+      default: () => ({})
+    }
   },
   methods: {
-    getClasses(index) {
-      var remainder = index % 3;
-      if (remainder === 0) {
-        return "col-lg-3 offset-lg-1";
-      } else if (remainder === 2) {
-        return "col-lg-4";
-      } else {
-        return "col-lg-3";
-      }
-    }
-  }
+  },
 };
 </script>
 <style>

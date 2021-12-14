@@ -8,7 +8,7 @@
     <div class="sidebar-wrapper" id="style-3">
       <div class="logo">
         <a href="/" class="simple-text text-center">
-          Ghoomo
+          FATHOPES
         </a>
       </div>
       <slot></slot>
@@ -35,7 +35,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "Ghoomo Dashboard"
+      default: "FATHOPES Dashboard"
     },
     backgroundColor: {
       type: String,

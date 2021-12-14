@@ -2,23 +2,35 @@
   <table class="table" :class="tableClass">
     <thead>
       <slot name="columns">
-        <th v-for="column in columns" :key="column">{{column}}</th>
+        <th v-for="column in columns" :key="column">{{ column }}</th>
+        <th v-if="actions.length > 0" :colspan="actions.length">Action(s)</th>
       </slot>
-      <th>Action</th>
     </thead>
     <tbody>
       <tr v-for="(item, index) in data" :key="index">
         <slot :row="item">
-          <td
-            v-for="(column, index) in columns"
-            :key="index"
-            
-          >
-          <span v-if="hasValue(item, column)">
-              {{itemValue(item, column)}}
-          </span>
+          <td v-for="(column, index) in columns" :key="index">
+            <span v-if="hasValue(item, column)">
+              {{ itemValue(item, column) }}
+            </span>
           </td>
         </slot>
+        <template
+          v-if="item.status !== 'completed' && item.status !== 'cancelled'"
+        >
+          <td v-for="column in actions" :key="column">
+            <p-button
+              size="sm"
+              round
+              outline
+              block
+              @click.native="$emit(column, item)"
+            >
+              {{ column }}
+            </p-button>
+          </td>
+        </template>
+
         <td v-if="hasValue(item, 'status')">
           <p-button
             v-if="itemValue(item, 'status') == 'active'"
@@ -27,7 +39,8 @@
             outline
             block
             @click.native="$emit('suspended', item, index)"
-          >Suspend</p-button>
+            >Suspend</p-button
+          >
           <p-button
             v-if="itemValue(item, 'status') == 'suspended'"
             size="sm"
@@ -35,7 +48,8 @@
             outline
             block
             @click.native="$emit('active', item, index)"
-          >Activate</p-button>
+            >Activate</p-button
+          >
         </td>
       </tr>
     </tbody>
@@ -49,25 +63,25 @@ export default {
     data: Array,
     type: {
       type: String, // striped | hover
-      default: "hover"
+      default: "hover",
     },
     title: {
       type: String,
-      default: ""
+      default: "",
     },
     subTitle: {
       type: String,
-      default: ""
+      default: "",
     },
     actions: {
       type: Array,
-      default: () => ["delete"]
-    }
+      default: () => [],
+    },
   },
   computed: {
     tableClass() {
       return `table-${this.type}`;
-    }
+    },
   },
   methods: {
     hasValue(item, column) {
@@ -75,8 +89,8 @@ export default {
     },
     itemValue(item, column) {
       return item[column.toLowerCase()];
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

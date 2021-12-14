@@ -1,49 +1,61 @@
 import axios from 'axios'
 
 const axiosObj = axios.create({
-  baseURL: 'http://ghoomo.com.pk/mobile_app/admin_api/',
+  baseURL: './api/admin/',
   // headers: { 'Cache-Control': 'no-cache' }
 })
 
 
 export default {
-  users(page) {
-    return axiosObj.get(`/get_users.php?page=${page}`)
+  getUCOPrices() {
+    return axiosObj.get(`get_ucoprice.php`)
   },
-  activate(id) {
-    let form = new FormData();
-    form.append('id', id);
-    form.append('status', 'active');
-    return axiosObj.post(`/update_userstatus.php`, form)
+  setUCOPrices(price) {
+    return axiosObj.get(`set_ucoprice.php?price=${price}`)
   },
-  suspend(id) {
-    let form = new FormData();
-    form.append('id', id);
-    form.append('status', 'suspended');
-    return axiosObj.post(`/update_userstatus.php`, form)
+  getCustomers() {
+    return axiosObj.get(`get_customers.php`)
   },
-  listings(page) {
-    return axiosObj.get(`/get_listings.php?page=${page}&type=tour`)
+  updateCustomerStatus(status, id) {
+    return axiosObj.get(`update_customerstatus.php?status=${status}&user_id=${id}`)
   },
-  experiences(page) {
-    return axiosObj.get(`/get_listings.php?page=${page}&type=experience`)
+  withdrawRequest(type, status) {
+    return axiosObj.get(`get_withdrawalrequests.php?status=${status}&user_type=${type}`)
   },
-  activateListing(id) {
-    let form = new FormData();
-    form.append('id', id);
-    form.append('status', 'active');
-    return axiosObj.post(`/update_listingstatus.php`, form)
+  updateWithdrawalStatus(status, id) {
+    return axiosObj.get(`update_withdrawalstatus.php?status=${status}&id=${id}`)
   },
-  suspendListing(id) {
-    let form = new FormData();
-    form.append('id', id);
-    form.append('status', 'suspended');
-    return axiosObj.post(`/update_listingstatus.php`, form)
+  getAgents() {
+    return axiosObj.get(`get_agents.php`)
   },
-  reportedUsers(page) {
-    return axiosObj.get(`/get_reporteditems.php?page=${page}&type=users`)
+  getAgent(id) {
+    return axiosObj.get(`get_agent.php?agent_id=${id}`)
   },
-  reportedListings(page) {
-    return axiosObj.get(`/get_reporteditems.php?page=${page}&type=listings`)
-  }
+  updateAgentStatus(status, id) {
+    return axiosObj.get(`update_agentstatus.php?status=${status}&agent_id=${id}`)
+  },
+  getAgentsForApproval() {
+    return axiosObj.get(`get_newagents.php`)
+  },
+  getFAQ(type) {
+    return axiosObj.get(`get_faqs.php?user_type=${type}`)
+  },
+  getSingleFAQ(id) {
+    return axiosObj.get(`get_faq.php?id=${id}`)
+  },
+  addFAQ(type, question, answer) {
+    return axiosObj.get(`add_faq.php?user_type=${type}&question=${question}&answer=${answer}`)
+  },
+  updateFAQ(type, question, answer, id) {
+    return axiosObj.get(`update_faq.php?user_type=${type}&question=${question}&answer=${answer}&id=${id}`)
+  },
+  removeFAQ(id) {
+    return axiosObj.get(`delete_faq.php?id=${id}`)
+  },
+  getContent() {
+    return axiosObj.get(`get_static.php`)
+  },
+  updatedStatic(terms, privacy) {
+    return axiosObj.get(`update_static.php?terms=${terms}&privacy=${privacy}`)
+  },
 }

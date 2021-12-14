@@ -10,7 +10,7 @@
       </nav>
       <div class="copyright d-flex flex-wrap">
         &copy; Coded with
-        <i class="fa fa-heart heart"></i> by &nbsp; Mir Imad Ahmed
+        <i class="fa fa-heart heart"></i>
       </div>
     </div>
   </footer>
