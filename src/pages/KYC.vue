@@ -17,7 +17,9 @@
             :data="table1.data"
             :columns="table1.columns"
             :actions="table1.actions"
-            @Delete="deleteUser"
+            @Review="reviewUser"
+            @Approve="approveUser"
+            @Disapprove="rejectUser"
           ></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
@@ -36,7 +38,7 @@ const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 import { PaperTable } from "@/components";
-const tableColumns = ["username", "wallet", "amount"];
+const tableColumns = ["Name", "Surname", "Nationality", "NationalID", "Address"];
 
 export default {
   components: {
@@ -46,11 +48,11 @@ export default {
     return {
       isLoading: false,
       table1: {
-        title: "Users",
-        subTitle: "All users",
+        title: "KYC",
+        subTitle: "KYCs to check and approve/disapprove",
         columns: [...tableColumns],
         data: [],
-        actions: ["Delete"]
+        actions: ["Review", "Approve", "Disapprove"]
       },
     };
   },
@@ -60,22 +62,80 @@ export default {
   methods: {
     async fetch() {
       this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
-      query.equalTo("deleted", false);
-      query.find().then((users) => {
-        this.table1.data = users.map((user) => {
+      const KYC = Moralis.Object.extend("Kyc");
+      const query = new Moralis.Query(KYC);
+      query.equalTo("status", 0);
+      query.find().then((kycs) => {
+        this.table1.data = kycs.map((kyc) => {
           return {
-            username: user.get("username"),
-            wallet: user.get("wallet"),
-            amount: user.get("amount"),
-            id: user.id,
+            name: kyc.get("name"),
+            surname: kyc.get("surname"),
+            nationality: kyc.get("nationality"),
+            address: kyc.get("address"),
+            nationalid: kyc.get("nationalid"),
+            id: kyc.id,
           };
         });
       });
       this.isLoading = false;
     },
-    async deleteUser(user) {
+    async approveUser(user) {
+      this.isLoading = true;
+      const Kyc = Moralis.Object.extend("Kyc");
+      const query = new Moralis.Query(Kyc);
+      query.get(user.id).then(
+        (us) => {
+          us.set("status", 1);
+          us.save().then(() => {
+            this.$notify({
+              horizontalAlign: "left",
+              verticalAlign: "bottom",
+              message: "KYC approved successfuly.",
+              type: "success",
+            });
+            this.fetch();
+          });
+        },
+        (error) => {
+          this.isLoading = false;
+          this.$notify({
+            horizontalAlign: "left",
+            verticalAlign: "bottom",
+            message: error.message,
+            type: "danger",
+          });
+        }
+      );
+    }, 
+    async rejectUser(user) {
+      this.isLoading = true;
+      const Kyc = Moralis.Object.extend("Kyc");
+      const query = new Moralis.Query(Kyc);
+      query.get(user.id).then(
+        (us) => {
+          us.set("status", -1);
+          us.save().then(() => {
+            this.$notify({
+              horizontalAlign: "left",
+              verticalAlign: "bottom",
+              message: "KYC rejected successfuly.",
+              type: "success",
+            });
+            this.fetch();
+          });
+        },
+        (error) => {
+          this.isLoading = false;
+          this.$notify({
+            horizontalAlign: "left",
+            verticalAlign: "bottom",
+            message: error.message,
+            type: "danger",
+          });
+        }
+      );
+    }, 
+    async reviewUser(user) {
       this.isLoading = true;
       const User = Moralis.Object.extend("User");
       const query = new Moralis.Query(User);

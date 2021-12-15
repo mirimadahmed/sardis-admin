@@ -8,7 +8,7 @@
     <div class="sidebar-wrapper" id="style-3">
       <div class="logo">
         <a href="/" class="simple-text text-center">
-          FATHOPES
+          Sardis Admin Panel
         </a>
       </div>
       <slot></slot>
@@ -35,7 +35,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "FATHOPES Dashboard"
+      default: "Sardis Dashboard"
     },
     backgroundColor: {
       type: String,

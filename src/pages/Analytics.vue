@@ -7,43 +7,43 @@
     </div>
     <div v-else>
       <div class="row">
-        <div class="col-12">
-          <p>Terms</p>
-        </div>
-        <div class="col-12">
-          <VueEditor id="editor1" v-model="terms" />
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-12">
-          <p>Privacy Policy</p>
-        </div>
-        <div class="col-12">
-          <VueEditor id="editor2" v-model="privacy" />
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-12">
-          <button class="btn btn-primary" @click="save()">Save</button>
+        <div class="col-4">
+          <stats-card
+          >
+            <div
+              class="icon-big text-center"
+              slot="header"
+            >
+              <i class="ti-user"></i>
+            </div>
+            <div class="numbers" slot="content">
+              <p>Total Users</p>
+              {{ totalUsers }}
+            </div>
+            <div class="stats" slot="footer">
+              Total active users in Sardis
+            </div>
+          </stats-card>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { VueEditor } from "vue2-editor";
-("@/components/index");
-import api from "@/api";
+import StatsCard from "../components/Cards/StatsCard.vue";
+import Moralis from "moralis";
+const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
+const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
 
+Moralis.start({ serverUrl, appId });
 export default {
   components: {
-    VueEditor,
+    StatsCard,
   },
   data() {
     return {
       isLoading: false,
-      terms: null,
-      privacy: null,
+      totalUsers: 0,
     };
   },
   created() {
@@ -52,31 +52,13 @@ export default {
   methods: {
     async fetch() {
       this.isLoading = true;
-      const { data } = await api.getContent();
+      const User = Moralis.Object.extend("User");
+      const query = new Moralis.Query(User);
+      query.equalTo("deleted", false);
+      query.find().then((users) => {
+        this.totalUsers = users.length;
+      });
       this.isLoading = false;
-      this.terms = data.terms;
-      this.privacy = data.privacy;
-    },
-    async save() {
-      this.isLoading = true;
-      const { data } = await api.updatedStatic(this.terms, this.privacy);
-      this.isLoading = false;
-      if (data.error === 0) {
-        this.$notify({
-          horizontalAlign: "left",
-          verticalAlign: "bottom",
-          message: "Static Content Saved Successfully.",
-          type: "success",
-        });
-      } else {
-        this.error = data.message;
-        this.$notify({
-          horizontalAlign: "left",
-          verticalAlign: "bottom",
-          message: data.message,
-          type: "danger",
-        });
-      }
     },
   },
 };

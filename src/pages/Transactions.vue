@@ -16,8 +16,6 @@
             v-if="!isLoading"
             :data="table1.data"
             :columns="table1.columns"
-            :actions="table1.actions"
-            @Delete="deleteUser"
           ></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
@@ -36,7 +34,7 @@ const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 import { PaperTable } from "@/components";
-const tableColumns = ["username", "wallet", "amount"];
+const tableColumns = ["Type", "To", "From", "Amount"];
 
 export default {
   components: {
@@ -46,11 +44,10 @@ export default {
     return {
       isLoading: false,
       table1: {
-        title: "Users",
-        subTitle: "All users",
+        title: "Transactions",
+        subTitle: "All transactions",
         columns: [...tableColumns],
         data: [],
-        actions: ["Delete"]
       },
     };
   },
@@ -60,49 +57,20 @@ export default {
   methods: {
     async fetch() {
       this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
-      query.equalTo("deleted", false);
-      query.find().then((users) => {
-        this.table1.data = users.map((user) => {
+      const Transaction = Moralis.Object.extend("Transaction");
+      const query = new Moralis.Query(Transaction);
+      query.find().then((transactions) => {
+        this.table1.data = transactions.map((transaction) => {
           return {
-            username: user.get("username"),
-            wallet: user.get("wallet"),
-            amount: user.get("amount"),
-            id: user.id,
+            type: transaction.get("type"),
+            to: transaction.get("to"),
+            from: transaction.get("from"),
+            amount: transaction.get("amount"),
           };
         });
       });
       this.isLoading = false;
     },
-    async deleteUser(user) {
-      this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
-      query.get(user.id).then(
-        (us) => {
-          us.set("deleted", true);
-          us.save().then(() => {
-            this.$notify({
-              horizontalAlign: "left",
-              verticalAlign: "bottom",
-              message: "Maked as deleted successfuly.",
-              type: "success",
-            });
-            this.fetch();
-          });
-        },
-        (error) => {
-          this.isLoading = false;
-          this.$notify({
-            horizontalAlign: "left",
-            verticalAlign: "bottom",
-            message: error.message,
-            type: "danger",
-          });
-        }
-      );
-    }, 
   },
 };
 </script>

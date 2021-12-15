@@ -5,9 +5,6 @@
         <div class="row" slot="header">
           <div class="col-md-4">
             <h4 class="card-title">{{ table1.title }}</h4>
-            <p class="card-category" v-if="table1.subTitle">
-              {{ table1.subTitle }}
-            </p>
           </div>
         </div>
 
@@ -16,8 +13,10 @@
             v-if="!isLoading"
             :data="table1.data"
             :columns="table1.columns"
+            @active="activateUser"
+            @suspended="suspendUser"
             :actions="table1.actions"
-            @Delete="deleteUser"
+            @Paid="paidUser"
           ></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
@@ -35,8 +34,10 @@ const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
 const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
+
 import { PaperTable } from "@/components";
-const tableColumns = ["username", "wallet", "amount"];
+const tableColumns = ["Username", "Wallet", "Amount"];
+const tableData = [];
 
 export default {
   components: {
@@ -45,12 +46,14 @@ export default {
   data() {
     return {
       isLoading: false,
+      type: "",
+      status: "",
       table1: {
-        title: "Users",
-        subTitle: "All users",
+        title: "Referral Rewards",
+        subTitle: "Rewards to pay to users for reffering others",
+        actions: ["Paid"],
         columns: [...tableColumns],
-        data: [],
-        actions: ["Delete"]
+        data: [...tableData],
       },
     };
   },
@@ -60,33 +63,35 @@ export default {
   methods: {
     async fetch() {
       this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
-      query.equalTo("deleted", false);
-      query.find().then((users) => {
-        this.table1.data = users.map((user) => {
-          return {
-            username: user.get("username"),
-            wallet: user.get("wallet"),
-            amount: user.get("amount"),
-            id: user.id,
-          };
+      const ReferralReward = Moralis.Object.extend("ReferralReward");
+      const query = new Moralis.Query(ReferralReward);
+      query.equalTo("paid", false);
+      const rewards = await query.find();
+      this.table1.data = [];
+      for (let i = 0; i < rewards.length; i++) {
+        const user = rewards[i].get("user");
+        await user.fetch();
+        this.table1.data.push({
+          username: user.get("username"),
+          wallet: user.get("wallet"),
+          amount: rewards[i].get("amount"),
+          id: rewards[i].id,
         });
-      });
+      }
       this.isLoading = false;
     },
-    async deleteUser(user) {
+    async paidUser(user) {
       this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
+      const ReferralReward = Moralis.Object.extend("ReferralReward");
+      const query = new Moralis.Query(ReferralReward);
       query.get(user.id).then(
-        (us) => {
-          us.set("deleted", true);
-          us.save().then(() => {
+        (reward) => {
+          reward.set("paid", true);
+          reward.save().then(() => {
             this.$notify({
               horizontalAlign: "left",
               verticalAlign: "bottom",
-              message: "Maked as deleted successfuly.",
+              message: "Maked as paid successfuly.",
               type: "success",
             });
             this.fetch();
@@ -102,7 +107,7 @@ export default {
           });
         }
       );
-    }, 
+    },
   },
 };
 </script>
