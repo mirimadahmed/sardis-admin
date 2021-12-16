@@ -13,8 +13,6 @@
             v-if="!isLoading"
             :data="table1.data"
             :columns="table1.columns"
-            @active="activateUser"
-            @suspended="suspendUser"
             :actions="table1.actions"
             @Paid="paidUser"
           ></paper-table>

@@ -7,6 +7,8 @@ import KYC from "@/pages/KYC.vue";
 import StaticInfo from "@/pages/StaticInfo.vue";
 import Translations from "@/pages/Translations.vue";
 import Referrals from "@/pages/Referrals.vue";
+import Login from "@/pages/Login.vue";
+import UserProfile from "@/pages/UserProfile.vue";
 
 const routes = [
   {
@@ -35,6 +37,11 @@ const routes = [
         component: KYC
       },
       {
+        path: "kyc/:id",
+        name: "kyc",
+        component: UserProfile
+      },
+      {
         path: "transactions",
         name: "transactions",
         component: Transactions
@@ -48,9 +55,10 @@ const routes = [
         path: "static-info",
         name: "static-info",
         component: StaticInfo
-      }
+      },
     ]
   },
+  { path: "/login", name: "login", component: Login },
   { path: "*", component: NotFound }
 ];
 

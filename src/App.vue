@@ -1,12 +1,18 @@
 <template>
-  <div :class="{'nav-open': $sidebar.showSidebar}">
+  <div :class="{'nav-open': $sidebar.showSidebar }">
     <notifications></notifications>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+     authenticated() {
+      return this.$store.state.authenticated
+    }
+  }
+};
 </script>
 
 <style lang="scss">

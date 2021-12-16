@@ -136,32 +136,7 @@ export default {
       );
     }, 
     async reviewUser(user) {
-      this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
-      query.get(user.id).then(
-        (us) => {
-          us.set("deleted", true);
-          us.save().then(() => {
-            this.$notify({
-              horizontalAlign: "left",
-              verticalAlign: "bottom",
-              message: "Maked as deleted successfuly.",
-              type: "success",
-            });
-            this.fetch();
-          });
-        },
-        (error) => {
-          this.isLoading = false;
-          this.$notify({
-            horizontalAlign: "left",
-            verticalAlign: "bottom",
-            message: error.message,
-            type: "danger",
-          });
-        }
-      );
+      this.$router.push("/kyc/" + user.id);
     }, 
   },
 };

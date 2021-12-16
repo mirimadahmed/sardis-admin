@@ -6,6 +6,11 @@
   </div>
 </template>
 <script>
+import Moralis from "moralis";
+const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
+const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+Moralis.start({ serverUrl, appId });
+
 import UserCard from "./UserProfile/UserCard.vue";
 import api from "@/api";
 export default {
@@ -34,9 +39,20 @@ export default {
   methods: {
     async fetch(id) {
       this.isLoading = true;
-      const { data } = await api.getAgent(id);
+      const KYC = Moralis.Object.extend("Kyc");
+      const query = new Moralis.Query(KYC);
+      query.find(id).then((kyc) => {
+          this.user = {
+            name: kyc.get("name"),
+            surname: kyc.get("surname"),
+            nationality: kyc.get("nationality"),
+            address: kyc.get("address"),
+            nationalid: kyc.get("nationalid"),
+            image: kyc.get("image").url(),
+            id: kyc.id,
+          };
+      });
       this.isLoading = false;
-      this.user = data;
     },
     async changeStatus(status, user) {
       this.isLoading = true;
