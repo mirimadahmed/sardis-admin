@@ -40,6 +40,11 @@
 <style lang="scss">
 </style>
 <script>
+import Moralis from "moralis";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
+
+Moralis.start({ serverUrl, appId });
 import TopNavbar from "./TopNavbar.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
@@ -56,6 +61,7 @@ export default {
       }
     },
     logout() {
+      Moralis.User.logOut();
       this.$store.commit("setAuthentication", false);
       this.$router.push("/login");
     },

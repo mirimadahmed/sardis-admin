@@ -41,8 +41,8 @@
 </template>
 <script>
 import Moralis from "moralis"
-const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
-const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 
@@ -62,10 +62,10 @@ export default {
       this.isLoading = true;
       const StaticInfo = Moralis.Object.extend("StaticInfo");
       const query = new Moralis.Query(StaticInfo);
-      query.get("P2rDwbpdQmIn7DqaaS0ayNhq").then(
+      query.find().then(
         (info) => {
-          this.info = info;
-          this.message = info.get("info");
+          this.info = info[0];
+          this.message = this.info.get("info");
           this.isLoading = false;
         },
         (error) => {

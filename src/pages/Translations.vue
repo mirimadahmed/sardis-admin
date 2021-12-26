@@ -10,52 +10,44 @@
 
         <div slot="raw-content" class="py-3">
           <div v-if="!isLoading">
-            <div class="row ml-1 px-3">
-              <div class="col-6">
-                <h4>English</h4>
+            <template v-for="translation in translations">
+              <div class="row ml-1 px-3" :key="translation.id">
+                <div class="col-6">
+                  <h4>{{ translation.name }}</h4>
+                </div>
               </div>
-            </div>
-            <div class="row ml-1 px-3">
-              <div class="col-3">
-                <button class="btn btn-primary btn-small" round outline block>
-                  Upload
-                </button>
+              <div class="row ml-1 px-3" :key="translation.id + 1">
+                <div class="col-3">
+                  <input
+                    :id="translation.id"
+                    @change="uploadFile(translation)"
+                    type="file"
+                    hidden
+                    :ref="translation.id"
+                  />
+                  <button
+                    @click="chooseFile(translation.id)"
+                    class="btn btn-primary btn-small"
+                    round
+                    outline
+                    block
+                  >
+                    Upload
+                  </button>
+                </div>
+                <div class="col-3">
+                  <button
+                    class="btn btn-primary btn-small"
+                    round
+                    outline
+                    block
+                    @click="downloadItem(translation.file)"
+                  >
+                    Download
+                  </button>
+                </div>
               </div>
-              <div class="col-3">
-                <button
-                  class="btn btn-primary btn-small"
-                  round
-                  outline
-                  block
-                  @click="downloadEnglish()"
-                >
-                  Download
-                </button>
-              </div>
-            </div>
-            <div class="row ml-1 px-3">
-              <div class="col-6">
-                <h4>Turkish</h4>
-              </div>
-            </div>
-            <div class="row ml-1 px-3">
-              <div class="col-3">
-                <button class="btn btn-primary btn-small" round outline block>
-                  Upload
-                </button>
-              </div>
-              <div class="col-3">
-                <button
-                  class="btn btn-primary btn-small"
-                  round
-                  outline
-                  block
-                  @click="downloadTurkish()"
-                >
-                  Download
-                </button>
-              </div>
-            </div>
+            </template>
             <div class="row ml-1 px-3 mt-5">
               <div class="col-3">
                 <button class="btn btn-primary btn-small" round outline block>
@@ -76,8 +68,8 @@
 </template>
 <script>
 import Moralis from "moralis";
-const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
-const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 
@@ -95,7 +87,8 @@ export default {
     query.find().then((translations) => {
       this.translations = translations.map((translation) => {
         return {
-          file: translation.get("file").url(),
+          file: translation.get("messages").url(),
+          name: translation.get("name"),
           id: translation.id,
         };
       });
@@ -106,12 +99,25 @@ export default {
     downloadItem(url) {
       window.open(url);
     },
-
-    downloadEnglish() {
-      this.downloadItem(this.translations[0].file);
+    chooseFile(componentId) {
+      document.getElementById(componentId).click();
     },
-    downloadTurkish() {
-      this.downloadItem(this.translations[1].file);
+    uploadFile(translation) {
+      this.isLoading = true;
+      translation.file = this.$refs[translation.id][0].files[0];
+      const moralisFile = new Moralis.File(
+        translation.id + Date.now().toString(),
+        translation.file
+      );
+      moralisFile.save().then((retFile) => {
+        const Translation = Moralis.Object.extend("Translation");
+        const query = new Moralis.Query(Translation);
+        query.get(translation.id).then((trns) => {
+          trns.set("messages", retFile);
+          trns.save().then(() => (this.isLoading = false));
+          this.isLoading = false;
+        });
+      });
     },
   },
 };

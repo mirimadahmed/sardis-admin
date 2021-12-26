@@ -33,12 +33,12 @@
 </template>
 <script>
 import Moralis from "moralis";
-const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
-const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 import { PaperTable } from "@/components";
-const tableColumns = ["Name", "Surname", "Nationality", "NationalID", "Address"];
+const tableColumns = ["Name", "Surname", "Username"];
 
 export default {
   components: {
@@ -62,17 +62,16 @@ export default {
   methods: {
     async fetch() {
       this.isLoading = true;
-      const KYC = Moralis.Object.extend("Kyc");
-      const query = new Moralis.Query(KYC);
-      query.equalTo("status", 0);
+      const User = Moralis.Object.extend("User");
+      const query = new Moralis.Query(User);
+      query.equalTo("kyc", 0);
       query.find().then((kycs) => {
         this.table1.data = kycs.map((kyc) => {
           return {
             name: kyc.get("name"),
             surname: kyc.get("surname"),
-            nationality: kyc.get("nationality"),
-            address: kyc.get("address"),
-            nationalid: kyc.get("nationalid"),
+            username: kyc.get("username"),
+            nationalid: kyc.get("nid"),
             id: kyc.id,
           };
         });
@@ -81,11 +80,11 @@ export default {
     },
     async approveUser(user) {
       this.isLoading = true;
-      const Kyc = Moralis.Object.extend("Kyc");
-      const query = new Moralis.Query(Kyc);
+      const User = Moralis.Object.extend("User");
+      const query = new Moralis.Query(User);
       query.get(user.id).then(
         (us) => {
-          us.set("status", 1);
+          us.set("kyc", 2);
           us.save().then(() => {
             this.$notify({
               horizontalAlign: "left",
@@ -109,11 +108,12 @@ export default {
     }, 
     async rejectUser(user) {
       this.isLoading = true;
-      const Kyc = Moralis.Object.extend("Kyc");
-      const query = new Moralis.Query(Kyc);
+      const User = Moralis.Object.extend("User");
+      const query = new Moralis.Query(User);
       query.get(user.id).then(
         (us) => {
-          us.set("status", -1);
+          
+          us.set("kyc", 1);
           us.save().then(() => {
             this.$notify({
               horizontalAlign: "left",

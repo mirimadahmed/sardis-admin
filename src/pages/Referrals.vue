@@ -28,13 +28,13 @@
 </template>
 <script>
 import Moralis from "moralis";
-const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
-const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 
 import { PaperTable } from "@/components";
-const tableColumns = ["Username", "Wallet", "Amount"];
+const tableColumns = ["Email", "Wallet", "Amount"];
 const tableData = [];
 
 export default {
@@ -66,13 +66,16 @@ export default {
       query.equalTo("paid", false);
       const rewards = await query.find();
       this.table1.data = [];
+      const web3 = new Moralis.Web3();
       for (let i = 0; i < rewards.length; i++) {
-        const user = rewards[i].get("user");
-        await user.fetch();
+        const Wallet = Moralis.Object.extend("Wallet");
+        const walletQuery = new Moralis.Query(Wallet);
+        walletQuery.equalTo("email", rewards[i].get("user"));
+        const wallets = await walletQuery.find();
         this.table1.data.push({
-          username: user.get("username"),
-          wallet: user.get("wallet"),
-          amount: rewards[i].get("amount"),
+          email: rewards[i].get("user"),
+          wallet: wallets[0] ? wallets[0].get("wallet") : "",
+          amount: web3.utils.fromWei(rewards[i].get("amount").toString()),
           id: rewards[i].id,
         });
       }

@@ -2,82 +2,68 @@
   <card class="card-user">
     <div v-if="user">
       <div class="author mt-2">
-        <img
-          class="avatar border-white"
-          :src="`./api/pictures/agents/${user.profile_pic}`"
-          alt="..."
-        />
-        <h4 class="title">
-          {{ user.name }}
-          <br />
-          <a href="#">
-            <small>{{ user.surname }}</small>
-          </a>
-        </h4>
+        <h4 class="title">Review KYC</h4>
       </div>
-      <p class="description text-center">
-        {{ user.nationality }}
-        <br />
-        {{ user.address }}
-      </p>
     </div>
     <hr v-if="user" />
     <div class="row" v-if="user">
       <div class="col-6">
         <h5>
+          Name:
+          {{ user.name }}
+        </h5>
+        <h5>
+          Surname:
+          {{ user.surname }}
+        </h5>
+        <h5>
+          Date of Birth:
+          {{ user.dob }}
+        </h5>
+        <h5>
           National ID:
           {{ user.nationalid }}
         </h5>
+        <h5>
+          Nationality:
+          {{ user.nationality }}
+        </h5>
       </div>
-      <div class="row" v-if="user">
-        <div class="col-6">
+      <div class="col-6">
+        <h5>
+          Address 1:
+          {{ user.address1 }}
+        </h5>
+        <h5>
+          Address 2:
+          {{ user.address2 }}
+        </h5>
+        <h5>
+          City:
+          {{ user.city }}
+        </h5>
+        <h5>
+          Zip:
+          {{ user.zip }}
+        </h5>
+        <h5>
+          State:
+          {{ user.state }}
+        </h5>
+        <h5>
+          Country:
+          {{ user.country }}
+        </h5>
+      </div>
+      <div class="row m-0" v-if="user">
+        <div class="col-12">
           <h5>KYC Photo</h5>
           <img
             :src="`${user.image}`"
-            alt="KYC Image Here"
+            alt="KYC Image Missing"
             class="w-100 text-center shadow-sm"
           />
         </div>
-      </div>
-      <div class="col-4 p-5">
-        <h5>Action</h5>
-        <p-button
-          v-if="user.status == 'active'"
-          size="sm"
-          round
-          outline
-          block
-          @click.native="$emit('changeStatus', 'suspended', user)"
-          >Suspend</p-button
-        >
-        <p-button
-          v-if="user.status == 'suspended'"
-          size="sm"
-          round
-          outline
-          block
-          @click.native="$emit('changeStatus', 'active', user)"
-          >Activate</p-button
-        >
-        <p-button
-          v-if="user.status == 'pending'"
-          size="sm"
-          round
-          outline
-          block
-          @click.native="$emit('changeStatus', 'active', user)"
-          >Approve</p-button
-        >
-        <p-button
-          v-if="user.status == 'pending'"
-          size="sm"
-          round
-          outline
-          block
-          @click.native="$emit('changeStatus', 'rejected', user)"
-          >Reject</p-button
-        >
-        <p v-if="user.status === 'rejected'">User rejected.</p>
       </div>
     </div>
   </card>

@@ -20,30 +20,35 @@
         <button class="btn btn-primary btn-small mt-2 shadow" @click="login()">
           Login
         </button>
-      </div>  
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Moralis from "moralis";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
+
+Moralis.start({ serverUrl, appId });
 export default {
   name: "Login",
   data() {
     return {
       input: {
-        username: "",
-        password: "",
+        username: "admin",
+        password: "$d6~&p4xM}WCP'M=",
       },
     };
   },
   methods: {
     login() {
-      if (this.input.username == "admin" && this.input.password == "pass") {
-        this.$store.commit("setAuthentication", true);
-        this.$router.replace({ name: "analytics" });
-      } else {
-        console.log("The username and / or password is incorrect");
-      }
+      Moralis.User.logIn(this.input.username, this.input.password, { usePost: true }).then((user) => {
+        if (user.get("username") === "admin") {
+          this.$store.commit("setAuthentication", true);
+          this.$router.replace({ name: "analytics" });
+        }
+      });
     },
   },
 };

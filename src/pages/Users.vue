@@ -31,8 +31,8 @@
 </template>
 <script>
 import Moralis from "moralis";
-const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
-const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 import { PaperTable } from "@/components";
@@ -63,6 +63,7 @@ export default {
       const User = Moralis.Object.extend("User");
       const query = new Moralis.Query(User);
       query.equalTo("deleted", false);
+      query.notEqualTo("username", "admin");
       query.find().then((users) => {
         this.table1.data = users.map((user) => {
           return {

@@ -29,12 +29,12 @@
 </template>
 <script>
 import Moralis from "moralis";
-const appId = "7IRr1tK25jbvlEhI9qJgfpknkn2ykQIB1gRkNqX3";
-const serverUrl = "https://vr2whj9yqakg.usemoralis.com:2053/server";
+const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
+const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 import { PaperTable } from "@/components";
-const tableColumns = ["Type", "To", "From", "Amount"];
+const tableColumns = ["To", "From", "Amount", "Confirmed"];
 
 export default {
   components: {
@@ -44,7 +44,7 @@ export default {
     return {
       isLoading: false,
       table1: {
-        title: "Transactions",
+        title: "Sardis Transactions",
         subTitle: "All transactions",
         columns: [...tableColumns],
         data: [],
@@ -57,15 +57,16 @@ export default {
   methods: {
     async fetch() {
       this.isLoading = true;
-      const Transaction = Moralis.Object.extend("Transaction");
+      const Transaction = Moralis.Object.extend("AvaxTokenTransfers");
       const query = new Moralis.Query(Transaction);
+      query.equalTo("token_address", "0x86523d83624b04cf4e62cbeb00c213bbc4486f34");
       query.find().then((transactions) => {
         this.table1.data = transactions.map((transaction) => {
           return {
-            type: transaction.get("type"),
-            to: transaction.get("to"),
-            from: transaction.get("from"),
-            amount: transaction.get("amount"),
+            to: transaction.get("to_address"),
+            from: transaction.get("from_address"),
+            amount: transaction.get("value"),
+            confirmed: transaction.get("confirmed") ? "Yes" : "No",
           };
         });
       });
