@@ -50,7 +50,7 @@ export default {
         subTitle: "All users",
         columns: [...tableColumns],
         data: [],
-        actions: ["Delete"]
+        actions: ["Delete"],
       },
     };
   },
@@ -77,33 +77,35 @@ export default {
       this.isLoading = false;
     },
     async deleteUser(user) {
-      this.isLoading = true;
-      const User = Moralis.Object.extend("User");
-      const query = new Moralis.Query(User);
-      query.get(user.id).then(
-        (us) => {
-          us.set("deleted", true);
-          us.save().then(() => {
+      if (confirm("Are you sure you want to delete this user?")) {
+        this.isLoading = true;
+        const User = Moralis.Object.extend("User");
+        const query = new Moralis.Query(User);
+        query.get(user.id).then(
+          (us) => {
+            us.set("deleted", true);
+            us.save().then(() => {
+              this.$notify({
+                horizontalAlign: "left",
+                verticalAlign: "bottom",
+                message: "Maked as deleted successfuly.",
+                type: "success",
+              });
+              this.fetch();
+            });
+          },
+          (error) => {
+            this.isLoading = false;
             this.$notify({
               horizontalAlign: "left",
               verticalAlign: "bottom",
-              message: "Maked as deleted successfuly.",
-              type: "success",
+              message: error.message,
+              type: "danger",
             });
-            this.fetch();
-          });
-        },
-        (error) => {
-          this.isLoading = false;
-          this.$notify({
-            horizontalAlign: "left",
-            verticalAlign: "bottom",
-            message: error.message,
-            type: "danger",
-          });
-        }
-      );
-    }, 
+          }
+        );
+      }
+    },
   },
 };
 </script>
