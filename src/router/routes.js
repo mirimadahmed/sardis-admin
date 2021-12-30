@@ -9,6 +9,7 @@ import Translations from "@/pages/Translations.vue";
 import Referrals from "@/pages/Referrals.vue";
 import Login from "@/pages/Login.vue";
 import UserProfile from "@/pages/UserProfile.vue";
+import User from "@/pages/User.vue";
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
         path: "users",
         name: "users",
         component: Users
+      },
+      {
+        path: "user/:id",
+        name: "user",
+        component: User
       },
       {
         path: "analytics",

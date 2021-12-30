@@ -18,6 +18,7 @@
             :columns="table1.columns"
             :actions="table1.actions"
             @Delete="deleteUser"
+            @View="viewUser"
           ></paper-table>
           <div v-else class="w-100 text-center m-auto my-3 p-5">
             <div class="spinner-border text-success" role="status">
@@ -50,7 +51,7 @@ export default {
         subTitle: "All users",
         columns: [...tableColumns],
         data: [],
-        actions: ["Delete"],
+        actions: ["View", "Delete"],
       },
     };
   },
@@ -106,6 +107,9 @@ export default {
         );
       }
     },
+    viewUser(user) {
+      this.$router.push('/user/' + user.id);
+    }
   },
 };
 </script>
