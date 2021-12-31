@@ -36,8 +36,8 @@ export default {
   data() {
     return {
       input: {
-        username: "admin",
-        password: "$d6~&p4xM}WCP'M=",
+        username: "",
+        password: "",
       },
     };
   },
