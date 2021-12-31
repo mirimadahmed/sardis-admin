@@ -41,8 +41,8 @@
 </template>
 <script>
 import Moralis from "moralis"
-const appId = "LylHO2PCHeSnaB0wWqOaNGq3yeqPWNoeMw6nagJY";
-const serverUrl = "https://vockdueuzxjr.usemoralis.com:2053/server";
+const appId = "sB5QUUYtdPWRnifYozTfmnh5oPL5lXoEIDFpDjvw";
+const serverUrl = "https://utvs1gompwym.usemoralis.com:2053/server";
 
 Moralis.start({ serverUrl, appId });
 
